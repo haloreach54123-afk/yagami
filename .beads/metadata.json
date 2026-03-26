@@ -1,0 +1,7 @@
+{
+  "database": "dolt",
+  "backend": "dolt",
+  "dolt_mode": "server",
+  "dolt_database": "yagami",
+  "project_id": "a96135a4-29ff-437f-8bca-e6f76c24add5"
+}

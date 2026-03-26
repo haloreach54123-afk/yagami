@@ -1,0 +1,16 @@
+# Dolt server runtime artifacts
+dolt-server.lock
+dolt-server.log
+dolt-server.pid
+dolt-server.port
+
+# Dolt database files (added by bd init)
+.dolt/
+*.db
+
+node_modules/
+dist/
+.yagami/
+*.log
+
+reports/

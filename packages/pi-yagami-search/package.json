@@ -1,0 +1,32 @@
+{
+  "name": "@ahkohd/pi-yagami-search",
+  "version": "0.1.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "description": "Pi package providing Yagami web search tools",
+  "keywords": [
+    "pi-package",
+    "yagami",
+    "pi-extension",
+    "search"
+  ],
+  "pi": {
+    "extensions": [
+      "./extensions"
+    ]
+  },
+  "peerDependencies": {
+    "@mariozechner/pi-ai": "*",
+    "@mariozechner/pi-coding-agent": "*",
+    "@mariozechner/pi-tui": "*",
+    "@sinclair/typebox": "*"
+  },
+  "files": [
+    "extensions",
+    "README.md",
+    "package.json"
+  ]
+}

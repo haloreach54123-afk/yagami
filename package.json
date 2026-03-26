@@ -1,0 +1,58 @@
+{
+  "name": "@ahkohd/yagami",
+  "version": "0.1.0",
+  "private": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "type": "module",
+  "description": "Local-first web search agent",
+  "bin": {
+    "yagami": "./dist/cli.js"
+  },
+  "scripts": {
+    "prepare": "npm run build",
+    "start": "node ./dist/cli.js start",
+    "stop": "node ./dist/cli.js stop",
+    "status": "node ./dist/cli.js status",
+    "reload": "node ./dist/cli.js reload",
+    "doctor": "node ./dist/cli.js doctor",
+    "config": "node ./dist/cli.js config",
+    "fetch": "node ./dist/cli.js fetch",
+    "search": "node ./dist/cli.js search",
+    "search:advanced": "node ./dist/cli.js search-advanced",
+    "code": "node ./dist/cli.js code",
+    "company": "node ./dist/cli.js company",
+    "similar": "node ./dist/cli.js similar",
+    "deep": "node ./dist/cli.js deep",
+    "prompt": "node ./dist/cli.js prompt",
+    "daemon": "node ./dist/daemon.js",
+    "theme": "node ./dist/cli.js theme",
+    "lint": "biome lint .",
+    "lint:fix": "biome lint --write .",
+    "format": "biome format --write .",
+    "format:check": "biome format .",
+    "pretty": "biome format --write .",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc -p tsconfig.json && chmod +x ./dist/cli.js ./dist/daemon.js",
+    "dev:ts": "tsx ./src/cli.ts"
+  },
+  "dependencies": {
+    "@lightpanda/browser": "^1.2.0",
+    "@mariozechner/pi-agent-core": "^0.61.0",
+    "@mariozechner/pi-ai": "^0.61.0",
+    "cli-markdown": "^3.5.1",
+    "defuddle": "^0.14.0",
+    "linkedom": "^0.18.12",
+    "playwright-core": "^1.58.2"
+  },
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.4.9",
+    "@types/node": "^25.5.0",
+    "tsx": "^4.21.0",
+    "typescript": "^6.0.2"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "yagami": {
+      "baseUrl": "http://127.0.0.1:43111/mcp"
+    }
+  },
+  "imports": []
+}
