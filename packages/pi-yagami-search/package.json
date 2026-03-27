@@ -7,6 +7,15 @@
   },
   "type": "module",
   "description": "Pi package providing Yagami web search tools",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahkohd/yagami.git",
+    "directory": "packages/pi-yagami-search"
+  },
+  "homepage": "https://github.com/ahkohd/yagami/tree/main/packages/pi-yagami-search",
+  "bugs": {
+    "url": "https://github.com/ahkohd/yagami/issues"
+  },
   "keywords": [
     "pi-package",
     "yagami",

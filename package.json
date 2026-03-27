@@ -7,6 +7,14 @@
   },
   "type": "module",
   "description": "Local-first web search agent",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ahkohd/yagami.git"
+  },
+  "homepage": "https://github.com/ahkohd/yagami",
+  "bugs": {
+    "url": "https://github.com/ahkohd/yagami/issues"
+  },
   "bin": {
     "yagami": "./dist/cli.js"
   },
