@@ -19,6 +19,22 @@ const __dirname = path.dirname(__filename);
 const config = getConfig();
 const theme = createCliThemeRuntime(config);
 
+function readCliVersion(): string {
+  try {
+    const packageJsonPath = path.resolve(__dirname, "..", "package.json");
+    const payload = JSON.parse(fs.readFileSync(packageJsonPath, "utf8")) as { version?: string };
+    const version = String(payload.version || "").trim();
+    if (version) return version;
+  } catch {
+    // ignore and fallback below
+  }
+
+  const envVersion = String(process.env.npm_package_version || "").trim();
+  return envVersion || "0.0.0";
+}
+
+const CLI_VERSION = readCliVersion();
+
 const MARKDOWN_RENDER_ENABLED = (() => {
   const value = String(process.env.YAGAMI_MARKDOWN_RENDER ?? "")
     .trim()
@@ -78,9 +94,10 @@ function renderMarkdownForTerminal(markdown: string): string {
 }
 
 function printUsage(): void {
-  console.log(`YAGAMI (TS runtime)
+  console.log(`Yagami - Local first web search agent
 
 Usage:
+  yagami --version
   yagami start
   yagami stop
   yagami status [--cache] [--limit N] [--tokens] [--json]
@@ -102,11 +119,6 @@ Usage:
   yagami deep start <instructions> [--effort fast|balanced|thorough] [--json]
   yagami deep check <researchId> [--json]
   yagami <text>  # shorthand for search
-
-Notes:
-  - all primary commands are served by TS-native CLI paths.
-  - search-family commands support both JSON and NDJSON live-stream rendering in TS.
-  - search commands return source records. Use 'deep start' for synthesized reports.
 
 Environment:
   YAGAMI_LLM_API                (default: ${config.llmApi || "openai-completions"})
@@ -2137,6 +2149,11 @@ async function main(): Promise<void> {
   }
 
   const first = String(argv[0] || "").toLowerCase();
+
+  if (argv.length === 1 && (first === "-v" || first === "--version" || first === "version")) {
+    console.log(CLI_VERSION);
+    return;
+  }
   const asJson = argv.includes("--json");
   const asProfile = argv.includes("--profile");
 
