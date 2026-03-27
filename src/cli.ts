@@ -94,7 +94,7 @@ function renderMarkdownForTerminal(markdown: string): string {
 }
 
 function printUsage(): void {
-  console.log(`Yagami - Local first web search agent
+  console.log(`Local-first web search agent
 
 Usage:
   yagami --version
