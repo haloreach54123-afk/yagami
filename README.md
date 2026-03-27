@@ -32,7 +32,7 @@ yagami deep check <researchId>
 yagami stop
 ```
 
-## Pi package (pi-yagami-search)
+## Pi package
 
 - [`packages/pi-yagami-search`](./packages/pi-yagami-search/) — Pi extension package.
 
@@ -75,8 +75,6 @@ Core endpoints:
 - `POST /deep-research/start`, `POST /deep-research/check`
 
 You can configure daemon bind address with config keys (`host`, `port`) or env (`YAGAMI_HOST`, `YAGAMI_PORT`).
-
-Search-family POST bodies return source records (collation mode). Use `/deep-research/start` for synthesized reports.
 
 ## MCP over HTTP
 
