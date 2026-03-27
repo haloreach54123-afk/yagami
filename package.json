@@ -7,6 +7,7 @@
   },
   "type": "module",
   "description": "Local-first web search agent",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ahkohd/yagami.git"
@@ -49,13 +50,13 @@
     "@lightpanda/browser": "^1.2.0",
     "@mariozechner/pi-agent-core": "^0.61.0",
     "@mariozechner/pi-ai": "^0.61.0",
-    "cli-markdown": "^3.5.1",
+    "markdansi": "^0.2.1",
     "defuddle": "^0.14.0",
     "linkedom": "^0.18.12",
     "playwright-core": "^1.58.2"
   },
   "engines": {
-    "node": ">=20.6.0"
+    "node": ">=22.0.0"
   },
   "devDependencies": {
     "@biomejs/biome": "^2.4.9",

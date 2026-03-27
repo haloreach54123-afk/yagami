@@ -8,7 +8,7 @@ import readline from "node:readline";
 import { spawn } from "node:child_process";
 import { fileURLToPath } from "node:url";
 
-import cliMarkdown from "cli-markdown";
+import { render as renderAnsiMarkdown } from "markdansi";
 
 import { getConfig } from "./config.js";
 import { cmdTheme, createCliThemeRuntime } from "./cli/theme.js";
@@ -26,8 +26,6 @@ const MARKDOWN_RENDER_ENABLED = (() => {
   if (value === "0" || value === "false" || value === "no" || value === "off") return false;
   return Boolean(process.stdout.isTTY);
 })();
-
-const MARKDOWN_RENDER_WIDTH = Math.max(40, Math.min(96, (process.stdout.columns || 80) - 2));
 
 function normalizeMarkdownForRender(markdown: string): string {
   const lines = String(markdown ?? "")
@@ -68,10 +66,11 @@ function renderMarkdownForTerminal(markdown: string): string {
   if (!MARKDOWN_RENDER_ENABLED) return source;
 
   try {
-    const rendered = cliMarkdown(source, {
-      width: MARKDOWN_RENDER_WIDTH,
+    const rendered = renderAnsiMarkdown(source, {
+      wrap: false,
+      codeBox: false,
+      tableTruncate: false,
     });
-
     return typeof rendered === "string" ? rendered.trimEnd() : source;
   } catch {
     return source;

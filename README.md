@@ -1,5 +1,7 @@
 # Yagami
 
+[![CI](https://github.com/ahkohd/yagami/actions/workflows/ci.yml/badge.svg)](https://github.com/ahkohd/yagami/actions/workflows/ci.yml) [![npm version](https://img.shields.io/npm/v/@ahkohd/yagami.svg)](https://www.npmjs.com/package/@ahkohd/yagami) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+
 Local-first web search agent
 
 YAGAMI gives you:
