@@ -7,7 +7,7 @@ https://github.com/user-attachments/assets/eced71f9-f60d-4b8b-929d-ecd5a3fd54f7
 
 Local-first web search agent
 
-YAGAMI gives you:
+Yagami gives you:
 - **Agentic web search**: `search`, `search-advanced`, `code`, `company`, `similar`
 - **Deterministic extraction**: `fetch` (`browse & present`)
 - **Async deep agentic web search**: `deep start` / `deep check`
@@ -34,7 +34,7 @@ yagami stop
 
 ## Pi package
 
-- [`packages/pi-yagami-search`](./packages/pi-yagami-search/) — Pi extension package.
+- [`packages/pi-yagami-search`](./packages/pi-yagami-search/)
 
 ## Commands
 
