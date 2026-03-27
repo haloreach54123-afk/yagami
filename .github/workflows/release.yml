@@ -103,6 +103,23 @@ jobs:
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
+      - name: Create GitHub release
+        if: ${{ !inputs.dry_run }}
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ steps.version.outputs.new }}
+          release_name: v${{ steps.version.outputs.new }}
+          draft: false
+          prerelease: false
+          body: |
+            Automated release for v${{ steps.version.outputs.new }}.
+
+            Published packages:
+            - @ahkohd/yagami@${{ steps.version.outputs.new }}
+            - @ahkohd/pi-yagami-search@${{ steps.version.outputs.new }}
+
       - name: Dry run summary
         if: ${{ inputs.dry_run }}
         run: |
@@ -111,5 +128,6 @@ jobs:
           echo "- New version: ${{ steps.version.outputs.new }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- Would commit/tag/push v${{ steps.version.outputs.new }}" >> "$GITHUB_STEP_SUMMARY"
           echo "- Would publish yagami and pi-yagami-search to npm" >> "$GITHUB_STEP_SUMMARY"
+          echo "- Would create GitHub Release v${{ steps.version.outputs.new }}" >> "$GITHUB_STEP_SUMMARY"
           npm publish --dry-run --access public
           npm publish ./packages/pi-yagami-search --dry-run --access public
