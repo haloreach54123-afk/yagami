@@ -82,7 +82,7 @@ You can configure daemon bind address with config keys (`host`, `port`) or env (
 
 ## Configuration
 
-### 1) Config file (recommended)
+### Config file (recommended)
 
 Default path: `~/.config/yagami/config.json` (or `$XDG_CONFIG_HOME/yagami/config.json`).
 
@@ -157,7 +157,7 @@ For a custom search endpoint template:
 - `ui.<key>`: same keys as above under a `ui` object (merged over top-level)
 - `colors` / `themeColors`: compatibility aliases for `themeTokens`
 
-### 2) Config CLI
+### Config CLI
 
 ```bash
 yagami config path
@@ -173,7 +173,7 @@ yagami config set browseConcurrency 8 --json-value
 yagami config unset themeTokens.domain
 ```
 
-### 3) Environment variables
+### Environment variables
 
 - `YAGAMI_CONFIG_FILE` (default: `$YAGAMI_RUNTIME_DIR/config.json`)
 - `YAGAMI_RUNTIME_DIR` (default: `$XDG_CONFIG_HOME/yagami` or `~/.config/yagami`)
