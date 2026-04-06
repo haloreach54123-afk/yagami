@@ -1,5 +1,48 @@
 const URL_REGEX = /https?:\/\/[^\s)\]>]+/g;
 
+type UrlRewriteRule = {
+  id: string;
+  fromHost: string;
+  toHost: string;
+  pathPrefixes?: readonly string[];
+  preserveCanonicalUrl?: boolean;
+  expectedContentType?: string;
+};
+
+const URL_REWRITE_RULES: readonly UrlRewriteRule[] = [
+  {
+    id: "apple-docs-sosumi",
+    fromHost: "developer.apple.com",
+    toHost: "sosumi.ai",
+    pathPrefixes: ["/documentation", "/design/human-interface-guidelines", "/videos/play"],
+    preserveCanonicalUrl: true,
+    expectedContentType: "text/markdown",
+  },
+];
+
+function pathHasPrefix(pathname: string, prefix: string): boolean {
+  return pathname === prefix || pathname.startsWith(`${prefix}/`);
+}
+
+function hostnameEquals(left: string, right: string): boolean {
+  return left.trim().toLowerCase() === right.trim().toLowerCase();
+}
+
+function findMatchingUrlRewriteRule(url: URL): UrlRewriteRule | null {
+  for (const rule of URL_REWRITE_RULES) {
+    if (!hostnameEquals(url.hostname, rule.fromHost)) continue;
+
+    const prefixes = rule.pathPrefixes || [];
+    if (prefixes.length > 0 && !prefixes.some((prefix) => pathHasPrefix(url.pathname, prefix))) {
+      continue;
+    }
+
+    return rule;
+  }
+
+  return null;
+}
+
 export function sanitizeUrlCandidate(input: unknown): string {
   let value = String(input ?? "").trim();
   if (!value) return "";
@@ -73,6 +116,40 @@ export function normalizeUniqueUrls(values: Iterable<unknown>): string[] {
   }
 
   return urls;
+}
+
+export type BrowseUrlRewrite = {
+  url: string;
+  rewritten: boolean;
+  ruleId?: string;
+  preserveCanonicalUrl: boolean;
+  expectedContentType: string;
+};
+
+export function rewriteBrowseUrl(input: unknown): BrowseUrlRewrite {
+  const normalized = normalizeUrl(input);
+  const parsed = new URL(normalized);
+  const rule = findMatchingUrlRewriteRule(parsed);
+
+  if (!rule) {
+    return {
+      url: normalized,
+      rewritten: false,
+      preserveCanonicalUrl: false,
+      expectedContentType: "text/html",
+    };
+  }
+
+  const rewritten = new URL(parsed.toString());
+  rewritten.hostname = rule.toHost;
+
+  return {
+    url: rewritten.toString(),
+    rewritten: true,
+    ruleId: rule.id,
+    preserveCanonicalUrl: Boolean(rule.preserveCanonicalUrl),
+    expectedContentType: String(rule.expectedContentType || "text/html"),
+  };
 }
 
 export function extractSeedUrls(text: unknown): string[] {

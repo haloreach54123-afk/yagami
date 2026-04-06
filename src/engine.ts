@@ -56,7 +56,7 @@ import {
   normalizeThinkingLevel,
   resolveRuntimeApiKey,
 } from "./engine/runtime-utils.js";
-import { normalizeUniqueUrls, normalizeUrl, normalizeUrlForDedupe } from "./engine/url-utils.js";
+import { normalizeUniqueUrls, normalizeUrl, normalizeUrlForDedupe, rewriteBrowseUrl } from "./engine/url-utils.js";
 import type { RuntimeConfig } from "./types/config.js";
 import type {
   DeepResearchCheckResult,
@@ -589,6 +589,7 @@ export class YagamiEngine {
       finalUrl: doc.finalUrl,
       status: doc.status,
       title: doc.title || "",
+      contentType: doc.contentType || "text/html",
       fetchedAt: new Date(Number(doc.fetchedAt || Date.now())).toISOString(),
       bytes: Buffer.byteLength(String(doc.html || ""), "utf8"),
       fromCache,
@@ -628,6 +629,61 @@ export class YagamiEngine {
     return titleMatch[1].replace(/\s+/g, " ").trim();
   }
 
+  extractMarkdownFrontmatterField(markdown: string, fieldName: string): string {
+    const input = String(markdown || "");
+    const match = input.match(/^---\s*\n([\s\S]*?)\n---\s*(?:\n|$)/);
+    if (!match?.[1]) return "";
+
+    const normalizedField = String(fieldName || "")
+      .trim()
+      .toLowerCase();
+
+    for (const rawLine of match[1].split(/\r?\n/)) {
+      const line = String(rawLine || "").trim();
+      if (!line || line.startsWith("#")) continue;
+      const separatorIndex = line.indexOf(":");
+      if (separatorIndex <= 0) continue;
+
+      const key = line.slice(0, separatorIndex).trim().toLowerCase();
+      if (key !== normalizedField) continue;
+
+      return line.slice(separatorIndex + 1).trim();
+    }
+
+    return "";
+  }
+
+  stripMarkdownFrontmatter(markdown: string): string {
+    const input = String(markdown || "");
+    return input.replace(/^---\s*\n[\s\S]*?\n---\s*(?:\n|$)/, "").trim();
+  }
+
+  extractTitleFromMarkdown(markdown: string): string {
+    const fromFrontmatter = this.extractMarkdownFrontmatterField(markdown, "title");
+    if (fromFrontmatter) return fromFrontmatter;
+
+    const body = this.stripMarkdownFrontmatter(markdown);
+    const headingMatch = body.match(/^#\s+(.+)$/m);
+    if (!headingMatch?.[1]) return "";
+    return headingMatch[1].replace(/\s+/g, " ").trim();
+  }
+
+  isMarkdownContentType(contentType: string): boolean {
+    const normalized = String(contentType || "")
+      .trim()
+      .toLowerCase();
+    if (!normalized) return false;
+    return normalized.includes("markdown") || normalized.includes("text/plain; profile=markdown");
+  }
+
+  buildHttpAcceptHeader(expectedContentType: string): string {
+    if (this.isMarkdownContentType(expectedContentType)) {
+      return "text/markdown,text/plain;q=0.9,text/html;q=0.8,*/*;q=0.5";
+    }
+
+    return "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8";
+  }
+
   extractTextFromHtmlFallback(html: string): string {
     const withoutScripts = String(html || "")
       .replace(/<script\b[^>]*>[\s\S]*?<\/script>/gi, " ")
@@ -635,23 +691,30 @@ export class YagamiEngine {
     return stripHtml(withoutScripts);
   }
 
-  getHttpEscalationReason(result: { status: number; title: string; html: string }): string | null {
-    const html = String(result.html || "").trim();
+  getHttpEscalationReason(result: { status: number; title: string; html: string; contentType: string }): string | null {
+    const body = String(result.html || "").trim();
     const title = String(result.title || "").trim();
 
     if (result.status >= 400) {
       return `http status ${result.status}`;
     }
 
-    if (!html) {
-      return "empty html";
+    if (!body) {
+      return this.isMarkdownContentType(result.contentType) ? "empty markdown" : "empty html";
     }
 
-    if (isChallengeLikeContent(title, html)) {
+    if (this.isMarkdownContentType(result.contentType)) {
+      if (body.length < 80) {
+        return "markdown too short";
+      }
+      return null;
+    }
+
+    if (isChallengeLikeContent(title, body)) {
       return "challenge/interstitial content";
     }
 
-    if (html.length < 800) {
+    if (body.length < 800) {
       return "html too short";
     }
 
@@ -661,7 +724,8 @@ export class YagamiEngine {
   async browseViaHttpFallback(
     url: string,
     abortSignal?: AbortSignal,
-  ): Promise<{ status: number; finalUrl: string; html: string; title: string }> {
+    expectedContentType = "text/html",
+  ): Promise<{ status: number; finalUrl: string; html: string; title: string; contentType: string }> {
     throwIfAborted(abortSignal, "browse aborted");
 
     const controller = new AbortController();
@@ -678,19 +742,26 @@ export class YagamiEngine {
         signal: controller.signal,
         headers: {
           "user-agent": "Yagami/0.1 (+https://github.com/yagami)",
-          accept: "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+          accept: this.buildHttpAcceptHeader(expectedContentType),
         },
       });
 
       throwIfAborted(abortSignal, "browse aborted");
 
-      const htmlRaw = await response.text();
-      const html = truncateText(htmlRaw, this.config.maxHtmlChars);
+      const bodyRaw = await response.text();
+      const body = truncateText(bodyRaw, this.config.maxHtmlChars);
+      const responseContentType = String(response.headers.get("content-type") || expectedContentType || "text/html")
+        .trim()
+        .toLowerCase();
+
       return {
         status: response.status,
         finalUrl: response.url || url,
-        html,
-        title: this.extractTitleFromHtml(html),
+        html: body,
+        title: this.isMarkdownContentType(responseContentType)
+          ? this.extractTitleFromMarkdown(body)
+          : this.extractTitleFromHtml(body),
+        contentType: responseContentType,
       };
     } finally {
       clearTimeout(timeoutId);
@@ -721,6 +792,8 @@ export class YagamiEngine {
 
       const startedAt = Date.now();
       const url = normalizeUrl(rawUrl);
+      const rewriteResult = rewriteBrowseUrl(url);
+      const browseUrl = rewriteResult.url;
       const bypassCache = toBool(options.bypassCache, false);
 
       if (!bypassCache) {
@@ -739,14 +812,27 @@ export class YagamiEngine {
 
       this.metrics.cacheMisses += 1;
 
-      const persistDocument = (source: { finalUrl: string; status: number; title: string; html: string }) => {
+      if (rewriteResult.rewritten) {
+        this.log(
+          `rewriting browse URL (${rewriteResult.ruleId || "rule"}): ${url} -> ${browseUrl} (expect=${rewriteResult.expectedContentType})`,
+        );
+      }
+
+      const persistDocument = (source: {
+        finalUrl: string;
+        status: number;
+        title: string;
+        html: string;
+        contentType?: string;
+      }) => {
         const doc = {
           id: randomUUID(),
           url,
-          finalUrl: source.finalUrl,
+          finalUrl: rewriteResult.preserveCanonicalUrl ? url : source.finalUrl,
           status: source.status,
           title: source.title,
           html: source.html,
+          contentType: String(source.contentType || rewriteResult.expectedContentType || "text/html"),
           fetchedAt: Date.now(),
         };
 
@@ -767,6 +853,7 @@ export class YagamiEngine {
         finalUrl: string;
         html: string;
         title: string;
+        contentType: string;
         durationMs: number;
         escalationReason: string | null;
       };
@@ -776,7 +863,7 @@ export class YagamiEngine {
 
       try {
         const httpStart = Date.now();
-        const httpResult = await this.browseViaHttpFallback(url, abortSignal);
+        const httpResult = await this.browseViaHttpFallback(browseUrl, abortSignal, rewriteResult.expectedContentType);
         const httpDurationMs = Date.now() - httpStart;
         const escalationReason = this.getHttpEscalationReason(httpResult);
 
@@ -844,7 +931,7 @@ export class YagamiEngine {
           throwIfAborted(abortSignal, "browse aborted");
 
           const gotoStart = Date.now();
-          const response = await page.goto(url, {
+          const response = await page.goto(browseUrl, {
             waitUntil: "domcontentloaded",
             timeout: this.config.browseLinkTimeoutMs,
           });
@@ -863,11 +950,15 @@ export class YagamiEngine {
 
           throwIfAborted(abortSignal, "browse aborted");
 
+          const browserContentType = String(response?.headers()?.["content-type"] || "text/html")
+            .trim()
+            .toLowerCase();
           const doc = persistDocument({
             finalUrl: page.url(),
             status: response?.status() ?? 0,
             title,
             html,
+            contentType: browserContentType || "text/html",
           });
 
           return {
@@ -902,7 +993,11 @@ export class YagamiEngine {
           if (this.isTimeoutBrowseError(error) && !httpAttempt) {
             try {
               const fallbackStart = Date.now();
-              const fallback = await this.browseViaHttpFallback(url, abortSignal);
+              const fallback = await this.browseViaHttpFallback(
+                browseUrl,
+                abortSignal,
+                rewriteResult.expectedContentType,
+              );
               const fallbackMs = Date.now() - fallbackStart;
               const escalationReason = this.getHttpEscalationReason(fallback);
               httpAttempt = {
@@ -984,6 +1079,49 @@ export class YagamiEngine {
         timing: {
           cache: "hit",
           totalMs: Date.now() - startedAt,
+        },
+      };
+    }
+
+    const docContentType = String(doc.contentType || "")
+      .trim()
+      .toLowerCase();
+    if (this.isMarkdownContentType(docContentType)) {
+      const parseStart = Date.now();
+      const rawMarkdown = String(doc.html || "");
+      const markdownBody = this.stripMarkdownFrontmatter(rawMarkdown);
+      const parseMs = Date.now() - parseStart;
+
+      const formatStart = Date.now();
+      const content = truncateText(markdownBody, maxChars);
+      const sourceTitle = this.extractTitleFromMarkdown(rawMarkdown);
+      const sourceTimestamp = this.extractMarkdownFrontmatterField(rawMarkdown, "timestamp");
+      const publishedDate = parseIsoDate(sourceTimestamp);
+
+      const payload = {
+        documentId,
+        url: String(doc.finalUrl || doc.url || ""),
+        title: String(sourceTitle || doc.title || "").trim(),
+        author: String(doc.author || "Unknown"),
+        published: publishedDate ? publishedDate.toISOString() : "Unknown",
+        wordCount: countWords(content),
+        content,
+        truncated: markdownBody.length > content.length,
+        extractor: "markdown-pass-through",
+        extractorError: undefined,
+      };
+      const formatMs = Date.now() - formatStart;
+
+      this.presentCache.set(documentId, { maxChars, payload });
+
+      return {
+        ...payload,
+        timing: {
+          cache: "miss",
+          totalMs: Date.now() - startedAt,
+          parseMs,
+          formatMs,
+          contentType: docContentType,
         },
       };
     }
@@ -1496,6 +1634,7 @@ export class YagamiEngine {
         url,
         finalUrl: String(doc.finalUrl || doc.url || url),
         title: String(doc.title || "").trim(),
+        contentType: String(doc.contentType || "text/html"),
         documentId: entry.documentId,
         fetchedAt: new Date(fetchedAt || now).toISOString(),
         expiresAt: new Date(expiresAt || now).toISOString(),
