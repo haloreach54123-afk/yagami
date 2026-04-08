@@ -636,7 +636,7 @@ async function handleMcpHttp(req: http.IncomingMessage, res: http.ServerResponse
     {
       sessionId: session.sessionId,
       protocolVersion,
-      statusCode: 404,
+      statusCode: 200,
     },
   );
 }
