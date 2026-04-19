@@ -749,7 +749,7 @@ export class YagamiEngine {
       throwIfAborted(abortSignal, "browse aborted");
 
       const bodyRaw = await response.text();
-      const body = truncateText(bodyRaw, this.config.maxHtmlChars);
+      const body = truncateText(bodyRaw, this.config.maxHtmlChars, "YAGAMI_MAX_HTML_CHARS");
       const responseContentType = String(response.headers.get("content-type") || expectedContentType || "text/html")
         .trim()
         .toLowerCase();
@@ -1093,7 +1093,7 @@ export class YagamiEngine {
       const parseMs = Date.now() - parseStart;
 
       const formatStart = Date.now();
-      const content = truncateText(markdownBody, maxChars);
+      const content = truncateText(markdownBody, maxChars, "YAGAMI_MAX_MARKDOWN_CHARS");
       const sourceTitle = this.extractTitleFromMarkdown(rawMarkdown);
       const sourceTimestamp = this.extractMarkdownFrontmatterField(rawMarkdown, "timestamp");
       const publishedDate = parseIsoDate(sourceTimestamp);
@@ -1175,7 +1175,7 @@ export class YagamiEngine {
 
     const formatStart = Date.now();
     const rawContent = String(extracted.content || "");
-    const content = truncateText(rawContent, maxChars);
+    const content = truncateText(rawContent, maxChars, "YAGAMI_MAX_MARKDOWN_CHARS");
 
     const payload = {
       documentId,

@@ -229,7 +229,7 @@ export async function tryFetchGitHubRepoContent(
     }
 
     const rawContent = lines.join("\n").trim();
-    const content = truncateText(rawContent, maxCharacters);
+    const content = truncateText(rawContent, maxCharacters, "YAGAMI_MAX_MARKDOWN_CHARS");
     const truncated = content.length < rawContent.length;
     const durationMs = Date.now() - startedAt;
 

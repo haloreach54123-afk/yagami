@@ -98,7 +98,7 @@ function printUsage(): void {
 
 Usage:
   yagami --version
-  yagami start
+  yagami start [--foreground]
   yagami stop
   yagami status [--cache] [--limit N] [--tokens] [--json]
   yagami reload [--json]
@@ -628,6 +628,11 @@ async function cmdStart(): Promise<void> {
 
   console.log(`yagami started (pid ${ready.pid})`);
   console.log(`daemon: ${config.daemonUrl}`);
+}
+
+async function cmdStartForeground(): Promise<void> {
+  const daemonPath = path.join(__dirname, "daemon.js");
+  await import(daemonPath);
 }
 
 async function cmdStop(): Promise<void> {
@@ -2158,7 +2163,11 @@ async function main(): Promise<void> {
   const asProfile = argv.includes("--profile");
 
   if (first === "start") {
-    await cmdStart();
+    if (argv.includes("--foreground")) {
+      await cmdStartForeground();
+    } else {
+      await cmdStart();
+    }
     return;
   }
 
