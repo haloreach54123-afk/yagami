@@ -296,10 +296,11 @@ export function categoryProfile(category: unknown): CategoryProfile {
   return CATEGORY_PROFILES[value] ?? { queryHint: "", includeDomains: [], includeText: [] };
 }
 
-export function truncateText(text: unknown, maxChars: number): string {
+export function truncateText(text: unknown, maxChars: number, envVar?: string): string {
   if (typeof text !== "string") return "";
   if (text.length <= maxChars) return text;
-  return `${text.slice(0, maxChars)}\n\n[Truncated to ${maxChars} characters]`;
+  const hint = envVar ? ` Adjust via ${envVar} env var.` : "";
+  return `${text.slice(0, maxChars)}\n\n[Truncated to ${maxChars} characters.${hint}]`;
 }
 
 export function countWords(text: unknown): number {
